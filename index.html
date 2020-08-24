@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+  <style>
+    .errorMsg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 40px;
+      font-weight: 900;
+    }
+    .spinner-grow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      /* transform: translate(-50%, -50%); */
+      font-weight: 900;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-6">
+        <h1 class="text-center">先渲染資料再載入</h1>
+        <canvas id="firstChart"></canvas>
+      </div>
+      <div class="col-6 position-relative">
+        <h1 class="text-center">讀取失敗</h1>
+        <canvas id="secondChart"></canvas>
+        <div class="errorMsg text-center text-danger">無法取得資料</div>
+      </div>
+      <div class="col-6 position-relative">
+        <h1 class="text-center">延遲載入</h1>
+        <canvas id="thirdChart"></canvas>
+        <div class="spinner-grow text-success" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <div class="col-6">
+        <h1 class="text-center">資料讀取後更新資料</h1>
+        <canvas id="fourthChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <script>
+    let first = document.getElementById('firstChart').getContext('2d');
+    let second = document.getElementById('secondChart').getContext('2d');
+    let third = document.getElementById('thirdChart').getContext('2d');
+    let fourth = document.getElementById('fourthChart').getContext('2d');
+    let datas = {}
+    let url = "https://raw.githubusercontent.com/boboyuki/BuildSchool_FileStorage/master/chartjs.json"
+    let errorUrl = "https://raw.githubusercontent.com/boboyuki/BuildSchool_FileStorage/master/chartjs01.json"
+    let myChart = new Chart(first, {
+      type: 'pie',
+      data: {
+        labels: "",
+        datasets: [{
+          label: 'dataset 1',
+          data: [],
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+    let myChart2 = new Chart(second, {
+      type: 'pie',
+      data: {
+        labels: "",
+        datasets: [{
+          label: 'dataset 1',
+          data: [],
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+    let myChart3 = new Chart(third, {
+      type: 'pie',
+      data: {
+        labels: "",
+        datasets: [{
+          label: 'dataset 1',
+          data: [],
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+    let myChart4 = new Chart(fourth, {
+      type: 'pie',
+      data: {
+        labels: "",
+        datasets: [{
+          label: 'dataset 1',
+          data: [],
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+    let xhr = new XMLHttpRequest();
+    xhr.open("get", url)
+    xhr.send();
+    xhr.onload = function () {
+      datas = JSON.parse(this.responseText);
+      myChart.data.labels = [...datas.labels];
+      myChart.data.datasets.forEach(item => {
+        item.data = [...datas.data];
+      })
+      myChart.update()
+    }
+    
+    let xhr2 = new XMLHttpRequest();
+    xhr2.open("get", errorUrl)
+    xhr2.send();
+    xhr2.onload = function () {
+      if (this.status == 200 && this.readyState == 4) {
+        datas = JSON.parse(this.responseText);
+        myChart2.data.labels = [...datas.labels];
+        myChart2.data.datasets.forEach(item => {
+          item.data = [...datas.data];
+        })
+        myChart2.update()
+      } else {
+        $(".errorMsg").show();
+        console.log(this.status);
+      }
+    }
+
+    let xhr3 = new XMLHttpRequest();
+    xhr3.open("get", url)
+    xhr3.send();
+    xhr3.onload = function () {
+      if (this.status == 200 && this.readyState == 4) {
+        datas = JSON.parse(this.responseText);
+
+        let timeId = setTimeout(function () {
+          myChart3.data.labels = [...datas.labels];
+          myChart3.data.datasets.forEach(item => {
+            item.data = [...datas.data];
+          })
+          $('.spinner-grow').hide();
+          myChart3.update()
+          clearTimeout(timeId);
+        }, 2000)
+      } else {
+        $(".errorMsg").show();
+        console.log(this.status);
+      }
+    }
+    
+    let xhr4 = new XMLHttpRequest();
+    xhr4.open("get", url)
+    xhr4.send();
+    xhr4.onload = function () {
+      if (this.status == 200 && this.readyState == 4) {
+        datas = JSON.parse(this.responseText);
+        myChart4.data.labels = [...datas.labels];
+        myChart4.data.datasets.forEach(item => {
+          item.data = [...datas.data];
+        })
+        myChart4.update()
+        let timeId = setTimeout(function () {
+          myChart4.data.labels = [...datas.labels];
+          myChart4.data.datasets.forEach(item => {
+            item.data = [10,20,30,40,5,15];
+          })
+          myChart4.update()
+          clearTimeout(timeId);
+        }, 2000)
+      } else {
+        $(".errorMsg").show();
+        console.log(this.status);
+      }
+    }
+  </script>
+</body>
+
+</html>
